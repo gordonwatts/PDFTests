@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFAddImageToPages", "PDFTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateQRCode", "GenerateQRCode\GenerateQRCode.csproj", "{D123B2C4-166A-4811-A344-1261B106AA08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFAddQRCode", "PDFAddQRCode\PDFAddQRCode.csproj", "{770AEE93-1FD0-4648-916D-D5DDD27C7CCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D123B2C4-166A-4811-A344-1261B106AA08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D123B2C4-166A-4811-A344-1261B106AA08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D123B2C4-166A-4811-A344-1261B106AA08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{770AEE93-1FD0-4648-916D-D5DDD27C7CCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{770AEE93-1FD0-4648-916D-D5DDD27C7CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{770AEE93-1FD0-4648-916D-D5DDD27C7CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{770AEE93-1FD0-4648-916D-D5DDD27C7CCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

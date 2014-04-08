@@ -32,15 +32,21 @@ namespace DecodeQRCodeFromImage
                 }
                 else
                 {
+#if false
+                    if (x.Width > 1000)
+                    {
+                        x = x.GetThumbnailImage(1000, (int)(1000.0 * ((float)x.Height) / ((float)x.Width)), () => false, IntPtr.Zero) as Bitmap;
+                    }
+#endif
                     var dc = new QRCodeDecoder();
                     var img = new QRCodeBitmapImage(x);
                     var result = dc.Decode(img);
-                    Console.WriteLine("{0}: {1}", f, result);
+                    Console.WriteLine("{0} ({2}x{3}): {1}", f, result, x.Width, x.Height);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("{0}: failed: {1} - {2}", f, e.Message, e.StackTrace);
+                Console.WriteLine("{0}: failed: {1}", f, e.Message);
             }
         }
     }

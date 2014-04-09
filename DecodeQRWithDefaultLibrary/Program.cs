@@ -38,7 +38,7 @@ namespace DecodeQRWithDefaultLibrary
                         x = x.GetThumbnailImage(1000, (int)(1000.0 * ((float)x.Height) / ((float)x.Width)), () => false, IntPtr.Zero) as Bitmap;
                     }
 #endif
-                    var dc = new BarcodeReader();
+                    var dc = new BarcodeReader() { Options = new ZXing.Common.DecodingOptions() { TryHarder = true } };
                     //dc.Options.PossibleFormats = new List<BarcodeFormat>() { BarcodeFormat.QR_CODE };
                     Console.Write("{0} ({1}x{2}): ", f, x.Width, x.Height);
                     var result = dc.Decode(x);

@@ -12,6 +12,7 @@ using System.Drawing;
 using MessagingToolkit.QRCode.Codec;
 using MessagingToolkit.QRCode.Codec.Data;
 using System.Drawing.Imaging;
+using ZXing;
 
 namespace ExtractAndScanPDF
 {
@@ -24,7 +25,7 @@ namespace ExtractAndScanPDF
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            foreach (var f in new string[]{"Scan300dpi.pdf", "Scan600dpi.pdf"})
+            foreach (var f in new string[] { "Scan300dpi.pdf", "Scan600dpi.pdf" })
             {
                 Console.WriteLine("Scanning file {0}.", f);
                 foreach (var image in ScanDocument(f))
@@ -40,28 +41,69 @@ namespace ExtractAndScanPDF
         /// <param name="image"></param>
         private static void ScanImageForQRCode(string imageFile)
         {
+            var orig = Bitmap.FromFile(imageFile) as Bitmap;
+
+            const double fraction = 0.30;
+            var crop = CropImage(orig, fraction);
+            {
+                crop.Save("bogus.jpg", ImageFormat.Jpeg);
+            }
+
+            ScanSingleImageByMethod(imageFile, crop, b => QRUseQRLib(b));
+            ScanSingleImageByMethod(imageFile, crop, b => QRUseZXing(b));
+        }
+
+        /// <summary>
+        /// Wrapper to measure the performance of a QR scanner guy
+        /// </summary>
+        /// <param name="imageFile"></param>
+        /// <param name="orig"></param>
+        /// <param name="scanner"></param>
+        private static void ScanSingleImageByMethod(string imageFile, Bitmap orig, Func<Bitmap,string> scanner)
+        {
             var start = DateTime.Now;
+            string result = "";
             try
             {
-                var orig = Bitmap.FromFile(imageFile) as Bitmap;
-
-                const double fraction = 0.30;
-                var crop = CropImage(orig, fraction);
-                {
-                    crop.Save("bogus.jpg", ImageFormat.Jpeg);
-                }
-                orig = crop;
-
-                var dc = new QRCodeDecoder();
-                var img = new QRCodeBitmapImage(orig);
-                var result = dc.Decode(img);
-                var end = DateTime.Now;
-                Console.WriteLine("  {0} ({2}x{3}): {1} ({4} sec)", imageFile, result, orig.Width, orig.Height, (end-start).ToString("ss\\.ff"));
+                result = scanner(orig);
             }
             catch (Exception e)
             {
-                var end = DateTime.Now;
-                Console.WriteLine("  {0}: failed: {1} ({2} sec)", imageFile, e.Message, (end-start).ToString("ss\\.ff"));
+                result = e.Message;
+            }
+            var end = DateTime.Now;
+            Console.WriteLine("  {0} ({2}x{3}): {1} ({4} sec)", imageFile, result, orig.Width, orig.Height, (end - start).ToString("ss\\.ff"));
+        }
+
+        /// <summary>
+        /// Uses the QR code library to do a scan.
+        /// </summary>
+        /// <param name="orig"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private static string QRUseQRLib(Bitmap orig)
+        {
+            var dc = new QRCodeDecoder();
+            var img = new QRCodeBitmapImage(orig);
+            return dc.Decode(img);
+        }
+
+        /// <summary>
+        /// Use the ZXing library to do the scanning
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        private static string QRUseZXing(Bitmap b)
+        {
+            var dc = new BarcodeReader() { Options = new ZXing.Common.DecodingOptions() { TryHarder = true } };
+            var result = dc.Decode(b);
+            if (result == null)
+            {
+                return "failed";
+            }
+            else
+            {
+                return result.Text;
             }
         }
 
